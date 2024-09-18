@@ -36,4 +36,10 @@ const productSchema = new Schema<IProduct>({
   updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
-export default model<IProduct>('Product', productSchema);
+productSchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
+});
+
+const ProductModel = model('ProductModel', productSchema);
+export { ProductModel };

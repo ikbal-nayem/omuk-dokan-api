@@ -1,27 +1,13 @@
-import {
-  createCategory,
-  createCollection,
-  deleteCategory,
-  deleteCollection,
-  getCategoryTree,
-  getCollections,
-  updateCategory,
-  updateCollection,
-} from '@src/controllers/product-config.controller';
+import { createProduct, deleteProduct, getProducts, updateProduct } from '@src/controllers/product.controller';
 import { Router } from 'express';
 
 const productRoutes = Router();
 
 //  /api/product/*
 
-productRoutes.get('/categories', getCategoryTree);
-productRoutes.post('/category', createCategory);
-productRoutes.put('/category/:id', updateCategory);
-productRoutes.delete('/category/:id', deleteCategory);
-
-productRoutes.get('/collections', getCollections);
-productRoutes.post('/collection', createCollection);
-productRoutes.put('/collection/:id', updateCollection);
-productRoutes.delete('/collection/:id', deleteCollection);
+productRoutes.get('/', getProducts);
+productRoutes.post('/', createProduct);
+productRoutes.put('/:id', updateProduct);
+productRoutes.delete('/:id', deleteProduct);
 
 export default productRoutes;
