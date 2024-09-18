@@ -1,0 +1,14 @@
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
+  roles: string[];
+  comparePassword(password: string): Promise<boolean>;
+  isDeleted: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
