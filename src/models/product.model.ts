@@ -41,5 +41,5 @@ productSchema.pre('save', function (next) {
   next();
 });
 
-const ProductModel = model('ProductModel', productSchema);
+const ProductModel = model('Product', productSchema);
 export { ProductModel };

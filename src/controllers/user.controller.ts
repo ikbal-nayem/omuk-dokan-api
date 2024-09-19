@@ -1,5 +1,6 @@
+import { IUser } from '@src/interface/user.interface';
 import UserModel from '@src/models/user.model';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 // Generate JWT token
@@ -33,8 +34,11 @@ export const login = async (req, res: Response) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
 
-    const token = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT_SECRET!, { expiresIn: '1h' });
-    res.status(200).json({ success: true, token, data: { id: user._id, name: user.email, roles: user.roles } });
+    const userWithoutPassword = user.toObject();
+    delete (userWithoutPassword as Partial<IUser>)?.password;
+
+    const token = jwt.sign({ _id: user._id, roles: user.roles }, process.env.JWT_SECRET!, { expiresIn: '10h' });
+    res.status(200).json({ success: true, token, data: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -89,4 +93,20 @@ export const deleteUser = async (req, res) => {
     message: 'User deleted successfully',
     success: true,
   });
+};
+
+// Assign roles (Only admin or superadmin)
+export const assignUserRoles = async (req: Request, res: Response) => {
+  try {
+    const { roles } = req.body;
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.roles = roles;
+    await user.save();
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
 };

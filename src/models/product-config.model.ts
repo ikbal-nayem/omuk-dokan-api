@@ -80,8 +80,8 @@ const variantSchema = new mongoose.Schema<IVariant>({
   discount: { type: Number, default: 0 },
 });
 
-const CategoryModel = mongoose.model('CategoryModel', categorySchema);
-const CollectionModel = mongoose.model('CollectionModel', collectionSchema);
-const VariantModel = mongoose.model('VariantModel', variantSchema);
+const CategoryModel = mongoose.model('Category', categorySchema);
+const CollectionModel = mongoose.model('Collection', collectionSchema);
+const VariantModel = mongoose.model('Variant', variantSchema);
 
 export { CategoryModel, CollectionModel, VariantModel };
