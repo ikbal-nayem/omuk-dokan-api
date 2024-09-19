@@ -27,8 +27,8 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       collections,
       tags,
-      createdBy: req.user?._id,
-      updatedBy: req.user?._id,
+      createdBy: req.user,
+      updatedBy: req.user,
     });
 
     await newProduct.save();
@@ -65,7 +65,7 @@ export const updateProduct = async (req: Request, res: Response) => {
         category,
         collections,
         tags,
-        updatedBy: req.user?._id,
+        updatedBy: req.user,
       },
       { new: true },
     ).populate(['variants', 'category', 'collections']);
