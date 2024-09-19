@@ -25,7 +25,7 @@ const productSchema = new Schema<IProduct>({
   },
   trackStock: { type: Boolean, default: true },
   stock: { type: Number, default: 0 },
-  category: { type: Schema.Types.ObjectId, ref: 'Category' },
+  category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   collections: [{ type: Schema.Types.ObjectId, ref: 'Collection' }],
   tags: [{ type: String }],
   isActive: { type: Boolean, default: true },

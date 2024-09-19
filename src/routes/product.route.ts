@@ -7,7 +7,7 @@ const productRoutes = Router();
 //  /api/product/*
 
 productRoutes.get('/', getProducts);
-productRoutes.post('/', authenticate, authorize('admin'), createProduct);
+productRoutes.post('/add', authenticate, authorize('admin'), createProduct);
 productRoutes.put('/:id', authenticate, authorize('admin'), updateProduct);
 productRoutes.delete('/:id', authenticate, authorize('admin'), deleteProduct);
 

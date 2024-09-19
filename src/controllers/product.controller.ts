@@ -1,5 +1,6 @@
 import { VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
+import { throwErrorResponse } from '@src/utils/error-handler';
 import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 
@@ -34,7 +35,7 @@ export const createProduct = async (req: Request, res: Response) => {
     await newProduct.save();
     return res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    throwErrorResponse(res, error);
   }
 };
 
@@ -76,7 +77,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return throwErrorResponse(res, error);
   }
 };
 
@@ -86,7 +87,7 @@ export const getProducts = async (req: Request, res) => {
     const products = await ProductModel.find({ isDeleted: false }).populate(['variants', 'category', 'collections']);
     return res.status(200).json({ success: true, data: products });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return throwErrorResponse(res, error);
   }
 };
 
@@ -99,7 +100,7 @@ export const getProductById = async (req: Request, res: Response) => {
     }
     return res.status(200).json({ success: true, data: product });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return throwErrorResponse(res, error);
   }
 };
 
@@ -114,6 +115,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({ success: true, message: 'Product deleted successfully' });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return throwErrorResponse(res, error);
   }
 };

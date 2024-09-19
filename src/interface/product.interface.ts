@@ -50,7 +50,7 @@ export interface IProduct extends Document {
   trackStock: boolean;
   stock?: number;
   category: Schema.Types.ObjectId;
-  collections: Schema.Types.ObjectId[];
+  collections?: Schema.Types.ObjectId[];
   tags?: string[];
   isActive: boolean;
   isDeleted: boolean;

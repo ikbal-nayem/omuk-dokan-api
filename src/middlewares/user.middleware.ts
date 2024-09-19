@@ -18,13 +18,13 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     const user = await userModel.findById(decoded?._id);
-    if (user && !user?.isDeleted) {
-      req.user = user;
-      next();
+    if (!user || user?.isDeleted) {
+      return res.status(401).json({ message: 'Invalid user', success: false });
     }
-    res.status(401).json({ message: 'Invalid user', success: false });
+    req.user = user;
+    next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token', success: false });
+    return res.status(401).json({ message: 'Invalid token', success: false });
   }
 };
 
