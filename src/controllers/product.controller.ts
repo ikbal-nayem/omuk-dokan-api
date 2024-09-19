@@ -8,6 +8,16 @@ export const createProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
 
+    // Check if hasVariants is true but no variants are provided
+    if (hasVariants && (!variants || variants.length === 0)) {
+      return throwErrorResponse(res, {
+        error: {
+          message: 'Variants are required when hasVariants is true',
+          errors: { variants: { message: 'Variants are required when hasVariants is true' } },
+        },
+      });
+    }
+
     // Handle variants
     let variantIds: Schema.Types.ObjectId[] = [];
     if (hasVariants && variants) {
@@ -44,6 +54,16 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
 
+    // Check if hasVariants is true but no variants are provided
+    if (hasVariants && (!variants || variants.length === 0)) {
+      return throwErrorResponse(res, {
+        error: {
+          message: 'Variants are required when hasVariants is true',
+          errors: { variants: { message: 'Variants are required when hasVariants is true' } },
+        },
+      });
+    }
+    
     // Handle variant updates (you can either add new variants or update existing ones)
     let variantIds: Schema.Types.ObjectId[] = [];
     if (hasVariants && variants) {
