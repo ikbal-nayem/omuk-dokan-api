@@ -1,10 +1,11 @@
 import { VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
+import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags, createdBy } = req.body;
+    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
 
     // Handle variants
     let variantIds: Schema.Types.ObjectId[] = [];
@@ -26,8 +27,8 @@ export const createProduct = async (req, res) => {
       category,
       collections,
       tags,
-      createdBy,
-      updatedBy: createdBy,
+      createdBy: req.user?._id,
+      updatedBy: req.user?._id,
     });
 
     await newProduct.save();
@@ -38,9 +39,9 @@ export const createProduct = async (req, res) => {
 };
 
 // Update a product by ID
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags, updatedBy } = req.body;
+    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
 
     // Handle variant updates (you can either add new variants or update existing ones)
     let variantIds: Schema.Types.ObjectId[] = [];
@@ -64,7 +65,7 @@ export const updateProduct = async (req, res) => {
         category,
         collections,
         tags,
-        updatedBy,
+        updatedBy: req.user?._id,
       },
       { new: true },
     ).populate(['variants', 'category', 'collections']);
@@ -90,7 +91,7 @@ export const getProducts = async (req: Request, res) => {
 };
 
 // Get a product by ID
-export const getProductById = async (req, res) => {
+export const getProductById = async (req: Request, res: Response) => {
   try {
     const product = await ProductModel.findById(req.params.id).populate(['variants', 'category', 'collections']);
     if (!product || product.isDeleted) {
@@ -103,9 +104,9 @@ export const getProductById = async (req, res) => {
 };
 
 // Delete a product (soft delete)
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const deletedProduct = await ProductModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
+    const deletedProduct = await ProductModel.findByIdAndUpdate(req.params.id, { isDeleted: true, updatedBy: req.user?._id }, { new: true });
 
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });

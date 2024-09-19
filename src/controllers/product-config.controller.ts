@@ -1,7 +1,8 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
+import { Request, Response } from 'express';
 
 // Category oparations
-export const createCategory = async (req, res) => {
+export const createCategory = async (req: Request, res: Response) => {
   try {
     const category = await CategoryModel.create(req.body);
     return res.status(201).json({

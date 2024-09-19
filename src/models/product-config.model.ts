@@ -37,6 +37,11 @@ const categorySchema = new mongoose.Schema<ICategory>({
   },
 });
 
+categorySchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
+});
+
 const collectionSchema = new mongoose.Schema<ICollection>({
   name: {
     type: String,
@@ -65,6 +70,11 @@ const collectionSchema = new mongoose.Schema<ICollection>({
     type: Date,
     default: Date.now,
   },
+});
+
+collectionSchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 const variantSchema = new mongoose.Schema<IVariant>({
