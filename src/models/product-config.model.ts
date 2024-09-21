@@ -16,6 +16,9 @@ const categorySchema = new mongoose.Schema<ICategory>({
     required: true,
     unique: true,
   },
+  image: {
+    type: String,
+  },
   description: {
     type: String,
   },
@@ -88,6 +91,9 @@ const variantSchema = new mongoose.Schema<IVariant>({
   stock: { type: Number, default: 0 },
   price: { type: Number, required: true },
   discount: { type: Number, default: 0 },
+  image: { type: String },
+  isActive: { type: Boolean, default: true },
+  isDeleted: { type: Boolean, default: false },
 });
 
 const CategoryModel = mongoose.model('Category', categorySchema);

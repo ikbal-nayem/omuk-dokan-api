@@ -1,11 +1,12 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { throwErrorResponse } from '@src/utils/error-handler';
+import { makeSlug } from '@src/utils/generator';
 import { Request, Response } from 'express';
 
 // Category oparations
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const category = await CategoryModel.create(req.body);
+    const category = await CategoryModel.create({ ...req.body, slug: makeSlug(req.body?.name), image: req.file?.path || null });
     return res.status(201).json({
       message: 'Category created successfully',
       data: category,

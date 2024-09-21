@@ -1,3 +1,4 @@
+import upload from '@src/config/multer.config';
 import {
   createCategory,
   createCollection,
@@ -16,7 +17,7 @@ const productConfigRoutes = Router();
 //  /api/product-config/*
 
 productConfigRoutes.get('/categories', getCategoryTree);
-productConfigRoutes.post('/category', authenticate, authorize('admin'), createCategory);
+productConfigRoutes.post('/category', authenticate, authorize('admin'), upload.single('image'), createCategory);
 productConfigRoutes.put('/category/:id', authenticate, authorize('admin'), updateCategory);
 productConfigRoutes.delete('/category/:id', authenticate, authorize('admin'), deleteCategory);
 

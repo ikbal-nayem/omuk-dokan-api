@@ -4,6 +4,7 @@ export interface ICategory {
   name: string;
   parent?: Types.ObjectId | null; // Reference to the parent category or null if it's a root category
   slug: string;
+  image?: string;
   description?: string;
   isActive: boolean;
   isDeleted: boolean;
@@ -36,7 +37,9 @@ export interface IVariant {
   stock: number;
   price: number;
   discount?: number;
+  image?: string;
   isActive?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface IProduct extends Document {
