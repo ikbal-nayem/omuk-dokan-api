@@ -2,42 +2,15 @@ import { ICategory, ICollection, IVariant } from '@src/interface/product.interfa
 import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema<ICategory>({
-  name: {
-    type: String,
-    required: true,
-  },
-  parent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    default: null,
-  },
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  image: {
-    type: String,
-  },
-  description: {
-    type: String,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  name: { type: String, required: true },
+  parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
+  slug: { type: String, required: true, unique: true },
+  image: { type: String },
+  description: { type: String },
+  isActive: { type: Boolean, default: true },
+  isDeleted: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 categorySchema.pre('save', function (next) {
@@ -46,33 +19,13 @@ categorySchema.pre('save', function (next) {
 });
 
 const collectionSchema = new mongoose.Schema<ICollection>({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  description: {
-    type: String,
-  },
-  image: {
-    type: String,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  name: { type: String, required: true, unique: true },
+  description: { type: String },
+  image: { type: String },
+  isActive: { type: Boolean, default: true },
+  isDeleted: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 collectionSchema.pre('save', function (next) {

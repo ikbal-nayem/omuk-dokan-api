@@ -1,23 +1,14 @@
-import fs from 'fs';
+import { createDirIfNotExists } from '@src/utils/file.util';
 import multer from 'multer';
 import path from 'path';
-
-const MEDIA_ROOT = 'media';
-
-const createIfNotExists = (dir: string) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  return dir;
-};
 
 // Set up multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, createIfNotExists(MEDIA_ROOT));
+    cb(null, createDirIfNotExists(req.mediaDir || process.env.MEDIA_ROOT!));
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, `${file.originalname?.split('.')[0]}-[${Date.now()}]${path.extname(file.originalname)}`);
   },
 });
 

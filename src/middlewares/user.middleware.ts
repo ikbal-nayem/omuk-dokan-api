@@ -1,15 +1,6 @@
-import { IUser } from '@src/interface/user.interface';
 import userModel from '@src/models/user.model';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: IUser;
-    }
-  }
-}
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');

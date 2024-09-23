@@ -1,12 +1,15 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
-import { throwErrorResponse } from '@src/utils/error-handler';
+import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
+import { deleteFile } from '@src/utils/file.util';
 import { makeSlug } from '@src/utils/generator';
 import { Request, Response } from 'express';
 
 // Category oparations
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const category = await CategoryModel.create({ ...req.body, slug: makeSlug(req.body?.name), image: req.file?.path || null });
+    req.body.slug = makeSlug(req.body?.name);
+    req.body.image = req.file?.path;
+    const category = await CategoryModel.create({ ...req.body });
     return res.status(201).json({
       message: 'Category created successfully',
       data: category,
@@ -18,16 +21,22 @@ export const createCategory = async (req: Request, res: Response) => {
 };
 
 export const updateCategory = async (req, res) => {
-  const category = await CategoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const category = await CategoryModel.findById(req.params?.id);
   if (!category) {
-    return res.status(404).json({
-      message: 'Category not found',
-      success: false,
-    });
+    return throwNotFoundResponse(res, 'Category not found');
   }
+
+  if ((req.file || !req.body.image) && category.image) {
+    deleteFile(category.image);
+  }
+
+  req.body.image = req.file?.path || req.body.image;
+  req.body.slug = makeSlug(req.body?.name);
+
+  const updatedCategory = await CategoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
   return res.status(200).json({
     message: 'Category updated successfully',
-    data: category,
+    data: updatedCategory,
     success: true,
   });
 };
