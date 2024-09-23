@@ -80,6 +80,7 @@ export const deleteCategory = async (req, res) => {
 // Collection oparations
 export const createCollection = async (req, res) => {
   try {
+    req.body.image = req.file?.path;
     const collection = await CollectionModel.create(req.body);
     return res.status(201).json({
       message: 'Collection created successfully',
@@ -92,16 +93,21 @@ export const createCollection = async (req, res) => {
 };
 
 export const updateCollection = async (req, res) => {
-  const collection = await CollectionModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const collection = await CollectionModel.findById(req.params?.id);
   if (!collection) {
-    return res.status(404).json({
-      message: 'Collection not found',
-      success: false,
-    });
+    return throwNotFoundResponse(res, 'Collection not found');
   }
+
+  if ((req.file || !req.body.image) && collection.image) {
+    deleteFile(collection.image);
+  }
+
+  req.body.image = req.file?.path || req.body.image;
+
+  const newCollection = await CollectionModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
   return res.status(200).json({
     message: 'Collection updated successfully',
-    data: collection,
+    data: newCollection,
     success: true,
   });
 };
