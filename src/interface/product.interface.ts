@@ -14,7 +14,7 @@ export interface ICategory {
   updatedBy: Schema.Types.ObjectId;
 }
 
-export interface ICollection extends Document {
+export interface ICollection {
   name: string;
   description?: string;
   image?: string;
@@ -42,19 +42,20 @@ export interface IVariant {
   isDeleted?: boolean;
 }
 
-export interface IProduct extends Document {
+export interface IProduct {
   name: string;
   description: string;
   price: number;
   discount?: number;
   hasVariants: boolean;
-  variants?: IVariant[];
+  variants?: Array<IVariant>;
   sku: string;
   trackStock: boolean;
   stock?: number;
   category: Schema.Types.ObjectId;
   collections?: Schema.Types.ObjectId[];
-  tags?: string[];
+  tags?: Array<string>;
+  images?: Array<string>;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;

@@ -4,7 +4,7 @@ import path from 'path';
 
 // Set up multer storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (req, file, cb) => {    
     cb(null, createDirIfNotExists(req.mediaDir || process.env.MEDIA_ROOT!));
   },
   filename: (req, file, cb) => {
@@ -21,6 +21,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter, limits: { fileSize: 1 * 1024 * 1024 }, preservePath: true });
 
 export default upload;

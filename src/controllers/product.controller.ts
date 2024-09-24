@@ -1,12 +1,14 @@
+import upload from '@src/config/multer.config';
 import { VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
-import { throwErrorResponse } from '@src/utils/error-handler';
-import { Request, Response } from 'express';
+import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
+import { NextFunction, Request, Response } from 'express';
 import { Schema } from 'mongoose';
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
+    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } =
+      req.body;
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
@@ -19,10 +21,9 @@ export const createProduct = async (req: Request, res: Response) => {
     }
 
     // Handle variants
-    let variantIds: Schema.Types.ObjectId[] = [];
+    let createdVariants;
     if (hasVariants && variants) {
-      const createdVariants = await VariantModel.insertMany(variants);
-      variantIds = createdVariants.map((variant) => variant._id);
+      createdVariants = await VariantModel.insertMany(variants);
     }
 
     const newProduct = new ProductModel({
@@ -31,7 +32,7 @@ export const createProduct = async (req: Request, res: Response) => {
       hasVariants,
       price: hasVariants ? undefined : price,
       discount,
-      variants: variantIds,
+      variants: createdVariants || [],
       sku: hasVariants ? undefined : sku,
       trackStock,
       stock: hasVariants ? undefined : stock,
@@ -43,7 +44,34 @@ export const createProduct = async (req: Request, res: Response) => {
     });
 
     await newProduct.save();
-    return res.status(201).json({ success: true, data: newProduct });
+    req.mediaDir = 'products/' + newProduct._id;
+    req.params.id = newProduct._id.toString();
+    addProductImages(req, res);
+  } catch (error) {
+    return throwErrorResponse(res, error);
+  }
+};
+
+export const addProductImages = async (req: Request, res: Response) => {
+  try {
+    console.log(req.mediaDir);
+    
+    upload.array('images')(req, res, async (err) => {
+      if (err) {
+        return throwErrorResponse(res, err);
+      }
+      console.log(req.files);
+      
+      const product = await ProductModel.findById(req.params.id);
+      if (!product) return throwNotFoundResponse(res, 'Product not found to upload images.');
+
+      const imageFiles = req?.files as Express.Multer.File[];
+      if (imageFiles && imageFiles?.length > 0) {
+        product.images = imageFiles?.map((f) => f.path);
+      }
+      await product.save();
+      return res.status(200).json({ success: true, data: product, message: 'Product added successfully.' });
+    });
   } catch (error) {
     throwErrorResponse(res, error);
   }
@@ -52,7 +80,8 @@ export const createProduct = async (req: Request, res: Response) => {
 // Update a product by ID
 export const updateProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } = req.body;
+    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } =
+      req.body;
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
@@ -63,7 +92,7 @@ export const updateProduct = async (req: Request, res: Response) => {
         },
       });
     }
-    
+
     // Handle variant updates (you can either add new variants or update existing ones)
     let variantIds: Schema.Types.ObjectId[] = [];
     if (hasVariants && variants) {
@@ -127,7 +156,11 @@ export const getProductById = async (req: Request, res: Response) => {
 // Delete a product (soft delete)
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const deletedProduct = await ProductModel.findByIdAndUpdate(req.params.id, { isDeleted: true, updatedBy: req.user?._id }, { new: true });
+    const deletedProduct = await ProductModel.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true, updatedBy: req.user?._id },
+      { new: true },
+    );
 
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });

@@ -28,6 +28,7 @@ const productSchema = new Schema<IProduct>({
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   collections: [{ type: Schema.Types.ObjectId, ref: 'Collection' }],
   tags: [{ type: String }],
+  images: [{ type: String }],
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
