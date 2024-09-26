@@ -1,6 +1,6 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
-import { deleteFile } from '@src/utils/file.util';
+import { deleteFiles } from '@src/utils/file.util';
 import { makeSlug } from '@src/utils/generator';
 import { Request, Response } from 'express';
 
@@ -27,7 +27,7 @@ export const updateCategory = async (req, res) => {
   }
 
   if ((req.file || !req.body.image) && category.image) {
-    deleteFile(category.image);
+    deleteFiles(category.image);
   }
 
   req.body.image = req.file?.path || req.body.image;
@@ -99,7 +99,7 @@ export const updateCollection = async (req, res) => {
   }
 
   if ((req.file || !req.body.image) && collection.image) {
-    deleteFile(collection.image);
+    deleteFiles(collection.image);
   }
 
   req.body.image = req.file?.path || req.body.image;

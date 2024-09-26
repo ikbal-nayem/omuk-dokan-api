@@ -8,7 +8,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    const user = await userModel.findById(decoded?._id);
+    const user = await userModel.findById(decoded?._id).select('-password');
     if (!user || user?.isDeleted) {
       return res.status(401).json({ message: 'Invalid user', success: false });
     }

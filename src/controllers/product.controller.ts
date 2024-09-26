@@ -1,17 +1,23 @@
-import upload from '@src/config/multer.config';
 import { VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
-import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
-import { NextFunction, Request, Response } from 'express';
+import { throwErrorResponse } from '@src/utils/error-handler';
+import { deleteFiles, moveFiles } from '@src/utils/file.util';
+import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 
-export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
+const removeProductImages = (req: Request) => {
+  const files = req.files as Express.Multer.File[];
+  if (files) deleteFiles(files?.map((file) => file.path));
+};
+
+export const createProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } =
       req.body;
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
+      removeProductImages(req);
       return throwErrorResponse(res, {
         error: {
           message: 'Variants are required when hasVariants is true',
@@ -44,36 +50,19 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     });
 
     await newProduct.save();
-    req.mediaDir = 'products/' + newProduct._id;
-    req.params.id = newProduct._id.toString();
-    addProductImages(req, res);
+
+    const images = req.files as Express.Multer.File[];
+    if (images.length > 0) {
+      newProduct.images = moveFiles(
+        'products/' + newProduct._id,
+        images?.map((file) => file.path),
+      ) as string[];
+      await newProduct.save();
+    }
+    return res.status(201).json({ success: true, data: newProduct, message: 'Product created successfully.' });
   } catch (error) {
+    removeProductImages(req);
     return throwErrorResponse(res, error);
-  }
-};
-
-export const addProductImages = async (req: Request, res: Response) => {
-  try {
-    console.log(req.mediaDir);
-    
-    upload.array('images')(req, res, async (err) => {
-      if (err) {
-        return throwErrorResponse(res, err);
-      }
-      console.log(req.files);
-      
-      const product = await ProductModel.findById(req.params.id);
-      if (!product) return throwNotFoundResponse(res, 'Product not found to upload images.');
-
-      const imageFiles = req?.files as Express.Multer.File[];
-      if (imageFiles && imageFiles?.length > 0) {
-        product.images = imageFiles?.map((f) => f.path);
-      }
-      await product.save();
-      return res.status(200).json({ success: true, data: product, message: 'Product added successfully.' });
-    });
-  } catch (error) {
-    throwErrorResponse(res, error);
   }
 };
 

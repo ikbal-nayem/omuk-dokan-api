@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import multer from 'multer';
+import bodyParser from 'body-parser';
 import { connectToDatabase } from '../src/config/db-connect';
 import appRoutes from '../src/routes/app.route';
 
@@ -11,9 +11,8 @@ const PORT = parseInt(process.env.PORT || '4500');
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(multer().any());
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   return res.json({ message: 'Hello World!' });
