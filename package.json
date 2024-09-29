@@ -5,13 +5,14 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts",
+    "start": "env-cmd -f env/.env.local nodemon --exec ts-node src/index.ts",
+    "dev": "env-cmd -f env/.env.dev nodemon --exec ts-node src/index.ts",
     "eslint:fix": "eslint --fix"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
+    "env-cmd": "^10.1.0",
     "express": "^4.20.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.1",
