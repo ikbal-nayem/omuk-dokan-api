@@ -1,9 +1,10 @@
 {
-  "name": "e-commerce-api",
+  "name": "node-ecommerce-api",
   "version": "1.0.0",
   "description": "Node project starter with Typescript, ESLint and Prettier",
   "main": "index.ts",
   "license": "MIT",
+  "type": "commonjs",
   "scripts": {
     "start": "env-cmd -f env/.env.local nodemon --exec ts-node src/index.ts",
     "dev": "env-cmd -f env/.env.dev nodemon --exec ts-node src/index.ts",
