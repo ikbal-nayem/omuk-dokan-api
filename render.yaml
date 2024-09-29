@@ -1,0 +1,12 @@
+# Exported from Render on 2024-09-29T07:49:22Z
+services:
+- type: web
+  name: Node Ecommerce API
+  runtime: node
+  repo: https://github.com/ikbal-nayem/node-ecommerce-api
+  plan: free
+  region: singapore
+  buildCommand: yarn --frozen-lockfile install
+  startCommand: env-cmd -f ../env/.env.dev ts-node index.ts
+  rootDir: src
+version: "1"

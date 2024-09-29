@@ -1,7 +1,7 @@
 {
   "name": "node-ecommerce-api",
   "version": "1.0.0",
-  "description": "Node project starter with Typescript, ESLint and Prettier",
+  "description": "Node ecommerce project",
   "main": "index.ts",
   "license": "MIT",
   "type": "commonjs",
