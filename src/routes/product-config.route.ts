@@ -17,7 +17,7 @@ const productConfigRoutes = Router();
 
 //  /api/product-config/*
 
-productConfigRoutes.get('/categories', getCategoryTree);
+productConfigRoutes.get('/category-tree', getCategoryTree);
 productConfigRoutes.post('/category', authenticate, authorize('admin'), mediaDir('category'), upload.single('image'), createCategory);
 productConfigRoutes.put('/category/:id', authenticate, authorize('admin'), mediaDir('category'), upload.single('image'), updateCategory);
 productConfigRoutes.delete('/category/:id', authenticate, authorize('admin'), deleteCategory);
