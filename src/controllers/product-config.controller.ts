@@ -1,4 +1,5 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
+import { isNull } from '@src/utils/check-validation';
 import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
 import { deleteFiles } from '@src/utils/file.util';
 import { makeSlug } from '@src/utils/generator';
@@ -32,6 +33,7 @@ export const updateCategory = async (req, res) => {
 
   req.body.image = req.file?.path || req.body.image;
   req.body.slug = makeSlug(req.body?.name);
+  req.body.parent = isNull(req.body?.parent) ? null : req.body?.parent;
 
   const updatedCategory = await CategoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
   return res.status(200).json({
