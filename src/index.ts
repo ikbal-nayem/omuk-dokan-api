@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
   return res.json({ message: 'Hello World!' });
 });
 app.use('/api', appRoutes);
+app.use('/api/ping', (req, res) => res.json({ message: 'pong' }));
 
 app.listen(PORT, async () => {
   await connectToDatabase();
