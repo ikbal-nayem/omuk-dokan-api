@@ -45,10 +45,10 @@ export const updateCategory = async (req, res) => {
 
 export const getCategoryTree = async (req, res) => {
   try {
-    const categories = await CategoryModel.find({ parent: null }).lean();
+    const categories = await CategoryModel.find({ parent: null, isDeleted: false }).lean();
     // Recursive function to populate subcategories
     const populateSubcategories = async (category) => {
-      const subcategories = await CategoryModel.find({ parent: category._id }).lean();
+      const subcategories = await CategoryModel.find({ parent: category._id, isDeleted: false }).lean();
       category.subcategories = subcategories;
       if (subcategories.length > 0) {
         await Promise.all(subcategories.map(populateSubcategories));
