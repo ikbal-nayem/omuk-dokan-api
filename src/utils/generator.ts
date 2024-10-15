@@ -1,4 +1,7 @@
+import { isNull } from './check-validation';
+
 export const makeSlug = (str: string) => {
+  if (isNull(str)) return;
   str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
   str = str.toLowerCase(); // convert string to lowercase
   str = str

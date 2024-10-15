@@ -32,7 +32,7 @@ export const updateCategory = async (req, res) => {
   }
 
   req.body.image = req.file?.path || req.body.image;
-  req.body.slug = makeSlug(req.body?.name);
+  req.body.slug = makeSlug(req.body?.name) || category.slug;
   req.body.parent = isNull(req.body?.parent) ? null : req.body?.parent;
 
   const updatedCategory = await CategoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
