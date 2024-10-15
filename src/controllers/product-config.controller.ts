@@ -10,6 +10,7 @@ export const createCategory = async (req: Request, res: Response) => {
   try {
     req.body.slug = makeSlug(req.body?.name);
     req.body.image = req.file?.path;
+    req.body.parent = isNull(req.body?.parent) ? null : req.body?.parent;
     const category = await CategoryModel.create({ ...req.body });
     return res.status(201).json({
       message: 'Category created successfully',
