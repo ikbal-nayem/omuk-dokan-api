@@ -27,16 +27,17 @@ export interface ICollection {
 }
 
 interface IVariantOption {
-  name: string;
+  key: string;
   value: string;
 }
 
 export interface IVariant {
-  variantOptions: IVariantOption[];
+  options: IVariantOption[];
   sku: string;
   stock: number;
   price: number;
-  discount?: number;
+  discountPrice?: number;
+  costPrice?: number;
   image?: string;
   isActive?: boolean;
   isDeleted?: boolean;
@@ -46,8 +47,16 @@ export interface IProduct {
   name: string;
   description: string;
   price: number;
-  discount?: number;
+  discountPrice?: number;
+  costPrice?: number;
+  weight?: number;
+  weightUnit?: string;
+  height?: number;
+  heightUnit?: string;
+  width?: number;
+  widthUnit?: string;
   hasVariants: boolean;
+  options?: Array<{ id: number; name: string; value: Array<{ id: number; name: string }> }>;
   variants?: Array<IVariant>;
   sku: string;
   trackStock: boolean;

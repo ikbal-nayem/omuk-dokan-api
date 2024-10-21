@@ -34,16 +34,17 @@ collectionSchema.pre('save', function (next) {
 });
 
 const variantSchema = new mongoose.Schema<IVariant>({
-  variantOptions: [
+  options: [
     {
-      name: { type: String, required: true },
+      key: { type: String, required: true },
       value: { type: String, required: true },
     },
   ],
   sku: { type: String, required: true },
   stock: { type: Number, default: 0 },
   price: { type: Number, required: true },
-  discount: { type: Number, default: 0 },
+  discountPrice: { type: Number, default: 0 },
+  costPrice: { type: Number, default: 0 },
   image: { type: String },
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false },

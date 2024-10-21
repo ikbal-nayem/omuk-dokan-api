@@ -11,10 +11,15 @@ const productSchema = new Schema<IProduct>({
       return !this.hasVariants;
     },
   },
-  discount: {
-    type: Number,
-    default: 0,
-  },
+  discountPrice: { type: Number, default: 0 },
+  costPrice: { type: Number, default: 0 },
+  height: { type: Number, default: 0 },
+  heightUnit: { type: String, default: 'cm' },
+  width: { type: Number, default: 0 },
+  widthUnit: { type: String, default: 'cm' },
+  weight: { type: Number, default: 0 },
+  weightUnit: { type: String, default: 'gm' },
+  options: [{ id: Number, name: String, value: [{ id: Number, name: String }] }],
   variants: [{ type: Schema.Types.ObjectId, ref: 'Variant' }],
   sku: {
     type: String,

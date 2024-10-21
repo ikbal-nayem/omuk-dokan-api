@@ -12,8 +12,21 @@ const removeProductImages = (req: Request) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, hasVariants, price, discount, variants, sku, trackStock, stock, category, collections, tags } =
-      req.body;
+    const {
+      name,
+      description,
+      hasVariants,
+      price,
+      discount,
+      variants,
+      options,
+      sku,
+      trackStock,
+      stock,
+      category,
+      collections,
+      tags,
+    } = req.body;
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
@@ -35,9 +48,10 @@ export const createProduct = async (req: Request, res: Response) => {
     const newProduct = new ProductModel({
       name,
       description,
-      hasVariants,
       price: hasVariants ? undefined : price,
       discount,
+      hasVariants,
+      options,
       variants: createdVariants || [],
       sku: hasVariants ? undefined : sku,
       trackStock,
