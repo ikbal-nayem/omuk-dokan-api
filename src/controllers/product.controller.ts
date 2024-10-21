@@ -12,7 +12,7 @@ const removeProductImages = (req: Request) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const {
+    let {
       name,
       description,
       hasVariants,
@@ -27,6 +27,10 @@ export const createProduct = async (req: Request, res: Response) => {
       collections,
       tags,
     } = req.body;
+
+    collections = JSON.parse(collections);
+    options = JSON.parse(options);
+    variants = JSON.parse(variants);
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
