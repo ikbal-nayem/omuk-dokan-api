@@ -27,6 +27,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       collections,
       tags,
+      isActive
     } = getRequestBody(req);
 
     // Check if hasVariants is true but no variants are provided
@@ -60,6 +61,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       collections,
       tags,
+      isActive,
       createdBy: req.user,
       updatedBy: req.user,
     });
