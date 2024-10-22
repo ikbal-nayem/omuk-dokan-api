@@ -12,11 +12,11 @@ export const makeSlug = (str: string) => {
 };
 
 export const getRequestBody = (req) => {
-  if (isNull(req.body)) {
-    return {};
+  if (isNull(req.body) || isNull(req.body?.data)) {
+    return null;
   }
   try {
-    return JSON.parse(req.body);
+    return JSON.parse(req.body)?.data;
   } catch (error) {
     return req.body;
   }
