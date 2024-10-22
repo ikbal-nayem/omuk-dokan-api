@@ -27,7 +27,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       collections,
       tags,
-      isActive
+      isActive,
     } = getRequestBody(req);
 
     // Check if hasVariants is true but no variants are provided
@@ -149,8 +149,12 @@ export const getProducts = async (req: Request, res) => {
 // Get a product by ID
 export const getProductById = async (req: Request, res: Response) => {
   try {
-    const product = await ProductModel.findById(req.params.id).populate(['variants', 'category', 'collections']);
-    if (!product || product.isDeleted) {
+    const product = await ProductModel.findById(req.params.id, { isDeleted: false }).populate([
+      'variants',
+      'category',
+      'collections',
+    ]);
+    if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     return res.status(200).json({ success: true, data: product });
