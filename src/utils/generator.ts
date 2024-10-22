@@ -16,7 +16,7 @@ export const getRequestBody = (req) => {
     return null;
   }
   try {
-    return JSON.parse(req.body)?.data;
+    return JSON.parse(req.body?.data);
   } catch (error) {
     return req.body;
   }
