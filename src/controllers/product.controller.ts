@@ -2,6 +2,7 @@ import { VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
 import { throwErrorResponse } from '@src/utils/error-handler';
 import { deleteFiles, moveFiles } from '@src/utils/file.util';
+import { getRequestBody } from '@src/utils/generator';
 import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 
@@ -26,11 +27,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       collections,
       tags,
-    } = req.body;
-
-    collections = JSON.parse(collections);
-    options = JSON.parse(options);
-    variants = JSON.parse(variants);
+    } = getRequestBody(req);
 
     // Check if hasVariants is true but no variants are provided
     if (hasVariants && (!variants || variants.length === 0)) {
