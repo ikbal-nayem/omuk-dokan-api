@@ -1,6 +1,6 @@
 import { IUser } from '@src/interface/user.interface';
 import UserModel from '@src/models/user.model';
-import { throwErrorResponse } from '@src/utils/error-handler';
+import { throwServerErrorResponse } from '@src/utils/error-handler';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -41,7 +41,7 @@ export const login = async (req, res: Response) => {
     const token = jwt.sign({ _id: user._id, roles: user.roles }, process.env.JWT_SECRET!, { expiresIn: '10d' });
     res.status(200).json({ success: true, token, data: userWithoutPassword });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };
 
@@ -108,6 +108,6 @@ export const assignUserRoles = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, data: user });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };

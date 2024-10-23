@@ -32,6 +32,7 @@ interface IVariantOption {
 }
 
 export interface IVariant {
+  _id?: Schema.Types.ObjectId;
   options: IVariantOption[];
   sku: string;
   stock: number;

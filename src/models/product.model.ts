@@ -19,7 +19,7 @@ const productSchema = new Schema<IProduct>({
   widthUnit: { type: String, default: 'cm' },
   weight: { type: Number, default: 0 },
   weightUnit: { type: String, default: 'gm' },
-  options: [{ id: Number, name: String, value: [{ id: Number, name: String }] }],
+  options: [{ id: Number, name: String, values: [{ id: Number, name: String }] }],
   variants: [{ type: Schema.Types.ObjectId, ref: 'Variant' }],
   sku: {
     type: String,

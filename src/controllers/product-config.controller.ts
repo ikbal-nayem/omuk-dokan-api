@@ -1,6 +1,6 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { isNull } from '@src/utils/check-validation';
-import { throwErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
+import { throwServerErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
 import { deleteFiles } from '@src/utils/file.util';
 import { makeSlug } from '@src/utils/generator';
 import { Request, Response } from 'express';
@@ -18,7 +18,7 @@ export const createCategory = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };
 
@@ -59,7 +59,7 @@ export const getCategoryTree = async (req, res) => {
     const categoryTree = await Promise.all(categories.map(populateSubcategories));
     return res.status(200).json({ data: categoryTree, success: true });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };
 
@@ -91,7 +91,7 @@ export const createCollection = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };
 
@@ -120,7 +120,7 @@ export const getCollections = async (req, res) => {
     const collections = await CollectionModel.find({ isDeleted: false });
     return res.status(200).json({ data: collections, success: true });
   } catch (error) {
-    return throwErrorResponse(res, error);
+    return throwServerErrorResponse(res, error);
   }
 };
 

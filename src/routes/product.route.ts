@@ -11,7 +11,7 @@ const productRoutes = Router();
 productRoutes.get('/get', getProducts);
 productRoutes.get('/get/:id', getProductById);
 productRoutes.post('/add', authenticate, authorize('admin'), mediaDir('_temp'), upload.array('images'), createProduct);
-productRoutes.put('/:id', authenticate, authorize('admin'), updateProduct);
+productRoutes.put('/:id', authenticate, authorize('admin'), mediaDir('_temp'), upload.array('images'), updateProduct);
 productRoutes.delete('/:id', authenticate, authorize('admin'), deleteProduct);
 
 export default productRoutes;
