@@ -111,12 +111,12 @@ export const updateProduct = async (req: Request, res: Response) => {
     const variantIds = reqBody?.variants?.map((variant) => variant._id) || [];
     const existingVariantIds = prevVariants.map((variant) => variant._id);
     const deletedVariantIds = existingVariantIds.filter((id) => !variantIds.includes(id));
+    if (deletedVariantIds.length > 0) {
+      await VariantModel.deleteMany({ _id: { $in: deletedVariantIds } }, { session });
+    }
     if (!isNull(reqBody?.variants)) {
       const createdVariants = await VariantModel.insertMany(reqBody?.variants, { session });
       reqBody.variants = createdVariants.map((variant) => variant._id);
-    }
-    if (deletedVariantIds.length > 0) {
-      await VariantModel.deleteMany({ _id: { $in: deletedVariantIds } }, { session });
     }
 
     // Handle new images or remove previous
