@@ -3,7 +3,8 @@ import { ProductModel } from '@src/models/product.model';
 import { isNull } from '@src/utils/check-validation';
 import { throwBadRequestResponse, throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
 import { deleteFiles, moveFiles } from '@src/utils/file.util';
-import { getRequestBody } from '@src/utils/generator';
+import { getRequestBody } from '@src/utils/request.utils';
+import { getPaginatedData, responseWithMeta } from '@src/utils/response.utils';
 import { Request, Response } from 'express';
 
 const removeProductImages = (req: Request) => {
@@ -98,7 +99,7 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 
   const currentProduct = await ProductModel.findById(req.params.id);
-  
+
   if (currentProduct?.isDeleted) return throwNotFoundResponse(res, 'Product not found');
 
   const prevVariants = currentProduct?.variants || [];
@@ -156,6 +157,42 @@ export const getProducts = async (req: Request, res) => {
   try {
     const products = await ProductModel.find({ isDeleted: false }).populate(['variants', 'category', 'collections']);
     return res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
+};
+
+export const searchProducts = async (req: Request, res: Response) => {
+  try {
+    const meta = req.body?.meta;
+    const q = req.body?.filter;
+    const query: any = { isDeleted: false };
+    if (q?.searchKey) {
+      query.$or = [
+        { name: { $regex: q?.searchKey, $options: 'i' } },
+        { description: { $regex: q?.searchKey, $options: 'i' } },
+        { sku: { $regex: q?.searchKey, $options: 'i' } },
+        { tags: { $regex: q?.searchKey, $options: 'i' } },
+      ];
+    }
+    if (!isNull(q?.isActive)) {
+      query.isActive = q.isActive;
+    }
+    if (q?.category) {
+      query.category = q.category;
+    }
+    if (q?.collection) {
+      query.collections = q.collection;
+    }
+
+    let queryBuilder = ProductModel.find(query)
+      .select(['-__v', '-isDeleted', '-createdBy', '-updatedBy'])
+      .populate(['variants', 'category', 'collections']);
+
+    const products = await getPaginatedData(req, queryBuilder).exec();
+    const productsCount = await ProductModel.countDocuments(query);
+
+    return responseWithMeta(res, products, productsCount, meta);
   } catch (error) {
     return throwServerErrorResponse(res, error);
   }
