@@ -16,7 +16,7 @@ const productRoutes = Router();
 //  /api/product/*
 
 productRoutes.get('/get', getProducts);
-productRoutes.get('/search', searchProducts);
+productRoutes.post('/search', searchProducts);
 productRoutes.get('/get/:id', getProductById);
 productRoutes.post('/add', authenticate, authorize('admin'), mediaDir('_temp'), upload.array('images'), createProduct);
 productRoutes.put('/:id', authenticate, authorize('admin'), mediaDir('_temp'), upload.array('images'), updateProduct);
