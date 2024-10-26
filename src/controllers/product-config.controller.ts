@@ -1,8 +1,9 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { isNull } from '@src/utils/check-validation';
-import { throwServerErrorResponse, throwNotFoundResponse } from '@src/utils/error-handler';
+import { throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
 import { deleteFiles } from '@src/utils/file.util';
 import { makeSlug } from '@src/utils/generator';
+import { getPaginatedData, responseWithMeta } from '@src/utils/response.utils';
 import { Request, Response } from 'express';
 
 // Category oparations
@@ -119,6 +120,28 @@ export const getCollections = async (req, res) => {
   try {
     const collections = await CollectionModel.find({ isDeleted: false });
     return res.status(200).json({ data: collections, success: true });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
+};
+
+export const searchCollections = async (req, res) => {
+  try {
+    const meta = req.body?.meta;
+    const q = req.body?.filter;
+    const query: any = { isDeleted: false };
+    if (q?.searchKey) {
+      query.$or = [{ name: { $regex: q?.searchKey, $options: 'i' } }, { description: { $regex: q?.searchKey, $options: 'i' } }];
+    }
+    if (!isNull(q?.isActive)) {
+      query.isActive = q.isActive;
+    }
+
+    const queryBuilder = CollectionModel.find(query).select('-__v -isDeleted -createdBy -updatedBy');
+    const collections = await getPaginatedData(req, queryBuilder).exec();
+    const collectionsCount = await CollectionModel.countDocuments(query);
+
+    return responseWithMeta(res, collections, collectionsCount, meta);
   } catch (error) {
     return throwServerErrorResponse(res, error);
   }

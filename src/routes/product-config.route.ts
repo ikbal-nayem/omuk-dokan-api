@@ -6,6 +6,7 @@ import {
   deleteCollection,
   getCategoryTree,
   getCollections,
+  searchCollections,
   updateCategory,
   updateCollection,
 } from '@src/controllers/product-config.controller';
@@ -23,6 +24,7 @@ productConfigRoutes.put('/category/:id', authenticate, authorize('admin'), media
 productConfigRoutes.delete('/category/:id', authenticate, authorize('admin'), deleteCategory);
 
 productConfigRoutes.get('/collections', getCollections);
+productConfigRoutes.post('/collection/search', searchCollections);
 productConfigRoutes.post('/collection', authenticate, authorize('admin'), mediaDir('collection'), upload.single('image'), createCollection);
 productConfigRoutes.put('/collection/:id', authenticate, authorize('admin'), mediaDir('collection'), upload.single('image'), updateCollection);
 productConfigRoutes.delete('/collection/:id', authenticate, authorize('admin'), deleteCollection);
