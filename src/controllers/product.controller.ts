@@ -187,6 +187,7 @@ export const searchProducts = async (req: Request, res: Response) => {
 
     let queryBuilder = ProductModel.find(query)
       .select(['-__v', '-isDeleted', '-createdBy', '-updatedBy'])
+      .sort({ name: 1, createdAt: -1 })
       .populate([
         'variants',
         { path: 'category', select: '_id name slug description' },
