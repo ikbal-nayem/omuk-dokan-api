@@ -18,6 +18,7 @@ export interface ICollection {
   name: string;
   description?: string;
   image?: string;
+  slug: string;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;

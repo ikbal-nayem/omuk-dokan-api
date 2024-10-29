@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const categorySchema = new mongoose.Schema<ICategory>({
   name: { type: String, required: true },
   parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
-  slug: { type: String, required: true, unique: true },
+  slug: { type: String, required: true },
   image: { type: String },
   description: { type: String },
   isActive: { type: Boolean, default: true },
@@ -22,6 +22,7 @@ const collectionSchema = new mongoose.Schema<ICollection>({
   name: { type: String, required: true, unique: true },
   description: { type: String },
   image: { type: String },
+  slug: { type: String, required: true },
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

@@ -64,6 +64,11 @@ export const getCategoryTree = async (req, res) => {
   }
 };
 
+export const isCategorySlugUnique = async (req, res) => {
+  const category = await CategoryModel.findOne({ slug: req.query.slug, isDeleted: false });
+  return res.status(200).json({ data: !category, success: true });
+};
+
 export const deleteCategory = async (req, res) => {
   const category = await CategoryModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
   if (!category) {
@@ -145,6 +150,11 @@ export const searchCollections = async (req, res) => {
   } catch (error) {
     return throwServerErrorResponse(res, error);
   }
+};
+
+export const isCollectionSlugUnique = async (req, res) => {
+  const collection = await CollectionModel.findOne({ slug: req.query.slug, isDeleted: false });
+  return res.status(200).json({ data: !collection, success: true });
 };
 
 export const deleteCollection = async (req, res) => {
