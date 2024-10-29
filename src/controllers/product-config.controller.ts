@@ -86,10 +86,7 @@ export const isCategorySlugUnique = async (req, res) => {
 export const deleteCategory = async (req, res) => {
   const category = await CategoryModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
   if (!category) {
-    return res.status(404).json({
-      message: 'Category not found',
-      success: false,
-    });
+    return throwNotFoundResponse(res, 'Category not found');
   }
   return res.status(200).json({
     message: 'Category deleted successfully',
@@ -182,10 +179,7 @@ export const isCollectionSlugUnique = async (req, res) => {
 export const deleteCollection = async (req, res) => {
   const collection = await CollectionModel.findByIdAndUpdate(req.params.id, { isDeleted: true }, { new: true });
   if (!collection) {
-    return res.status(404).json({
-      message: 'Collection not found',
-      success: false,
-    });
+    return throwNotFoundResponse(res, 'Collection not found');
   }
   return res.status(200).json({
     message: 'Collection deleted successfully',
