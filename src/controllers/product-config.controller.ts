@@ -10,6 +10,7 @@ export const createCategory = async (req: Request, res: Response) => {
   try {
     const existingCategory = await CategoryModel.findOne({ slug: req.body.slug, isDeleted: false });
     if (existingCategory) {
+      req.file?.path && deleteFiles(req.file?.path);
       return throwBadRequestResponse(res, {
         message: 'Category already exists',
         fields: [{ field: 'slug', message: 'Category with this slug already exists' }],
@@ -102,6 +103,14 @@ export const deleteCategory = async (req, res) => {
 // Collection oparations
 export const createCollection = async (req, res) => {
   try {
+    const existingCollection = await CollectionModel.findOne({ slug: req.body.slug, isDeleted: false });
+    if (existingCollection) {
+      req.file?.path && deleteFiles(req.file?.path);
+      return throwBadRequestResponse(res, {
+        message: 'Collection already exists',
+        fields: [{ field: 'slug', message: 'Collection with this slug already exists' }],
+      });
+    }
     req.body.image = req.file?.path;
     const collection = await CollectionModel.create(req.body);
     return res.status(201).json({
