@@ -1,15 +1,21 @@
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { isNull } from '@src/utils/check-validation';
-import { throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
+import { throwBadRequestResponse, throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
 import { deleteFiles } from '@src/utils/file.util';
-import { makeSlug } from '@src/utils/generator';
 import { getPaginatedData, responseWithMeta } from '@src/utils/response.utils';
 import { Request, Response } from 'express';
 
 // Category oparations
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    req.body.slug = makeSlug(req.body?.name);
+    const existingCategory = await CategoryModel.findOne({ slug: req.body.slug, isDeleted: false });
+    if (existingCategory) {
+      return throwBadRequestResponse(res, {
+        message: 'Category already exists',
+        fields: [{ field: 'slug', message: 'Category with this slug already exists' }],
+      });
+    }
+
     req.body.image = req.file?.path;
     req.body.parent = isNull(req.body?.parent) ? null : req.body?.parent;
     const category = await CategoryModel.create({ ...req.body });
@@ -29,12 +35,19 @@ export const updateCategory = async (req, res) => {
     return throwNotFoundResponse(res, 'Category not found');
   }
 
+  const existingCategory = await CategoryModel.findOne({ slug: req.body.slug, id: { $ne: req.params.id }, isDeleted: false });
+  if (existingCategory) {
+    return throwBadRequestResponse(res, {
+      message: 'Category already exists',
+      fields: [{ field: 'slug', message: 'Category with this slug already exists' }],
+    });
+  }
+
   if ((req.file || !req.body.image) && category.image) {
     deleteFiles(category.image);
   }
 
   req.body.image = req.file?.path || req.body.image;
-  req.body.slug = makeSlug(req.body?.name) || category.slug;
   req.body.parent = isNull(req.body?.parent) ? null : req.body?.parent;
 
   const updatedCategory = await CategoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
