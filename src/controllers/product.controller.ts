@@ -1,9 +1,10 @@
-import { VariantModel } from '@src/models/product-config.model';
+import { IObject } from '@src/interface/common.interface';
+import { CategoryModel, VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
 import { isNull } from '@src/utils/check-validation';
 import { throwBadRequestResponse, throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
 import { deleteFiles, moveFiles } from '@src/utils/file.util';
-import { getRequestBody } from '@src/utils/request.utils';
+import { generateSearchQuery, getRequestBody } from '@src/utils/request.utils';
 import { getPaginatedData, responseWithMeta } from '@src/utils/response.utils';
 import { Request, Response } from 'express';
 
@@ -152,11 +153,26 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-// Get all products
+// Get products
 export const getProducts = async (req: Request, res) => {
   try {
-    const products = await ProductModel.find({ isDeleted: false }).populate(['variants', 'category', 'collections']);
-    return res.status(200).json({ success: true, data: products });
+    const isActive = req.query.isActive;
+    const query: any = { isDeleted: false };
+    if (!isNull(isActive)) {
+      query.isActive = isActive === 'true';
+    }
+    let queryBuilder = ProductModel.find(query)
+      .select(['-__v', '-isDeleted', '-createdBy', '-updatedBy'])
+      .populate(['variants', 'category', 'collections']);
+
+    const meta = req.body?.meta;
+    const limit = parseInt(meta?.limit as string);
+    if (limit && limit > 0)
+      queryBuilder = queryBuilder.limit(limit).skip((parseInt((req.query?.page as string) || '1') - 1) * limit);
+
+    const products = await queryBuilder.exec();
+    const productsCount = await ProductModel.countDocuments(query);
+    return responseWithMeta(res, products, productsCount, { page: req.query?.page, limit: meta?.limit });
   } catch (error) {
     return throwServerErrorResponse(res, error);
   }
@@ -165,29 +181,28 @@ export const getProducts = async (req: Request, res) => {
 export const searchProducts = async (req: Request, res: Response) => {
   try {
     const meta = req.body?.meta;
-    const q = req.body?.filter;
-    const query: any = { isDeleted: false };
-    if (q?.searchKey) {
+    const qParams = req.body?.filter;
+    const query: IObject = generateSearchQuery(req);
+    if (qParams?.searchKey) {
       query.$or = [
-        { name: { $regex: q?.searchKey, $options: 'i' } },
-        { description: { $regex: q?.searchKey, $options: 'i' } },
-        { sku: { $regex: q?.searchKey, $options: 'i' } },
-        { tags: { $regex: q?.searchKey, $options: 'i' } },
+        { name: { $regex: qParams?.searchKey, $options: 'i' } },
+        { description: { $regex: qParams?.searchKey, $options: 'i' } },
+        { sku: { $regex: qParams?.searchKey, $options: 'i' } },
+        { tags: { $regex: qParams?.searchKey, $options: 'i' } },
       ];
     }
-    if (!isNull(q?.isActive)) {
-      query.isActive = q.isActive;
+    if (qParams.categorySlug) {
+      const category = await CategoryModel.findOne({ slug: qParams.categorySlug, isDeleted: false });
+      if (category) {
+        query.category = category._id;
+        delete query.categorySlug;
+      }
     }
-    if (q?.category) {
-      query.category = q.category;
-    }
-    if (q?.collection) {
-      query.collections = q.collection;
-    }
+
+    console.log(query);
 
     let queryBuilder = ProductModel.find(query)
       .select(['-__v', '-isDeleted', '-createdBy', '-updatedBy'])
-      // .sort({ name: 1, createdAt: -1 })
       .populate([
         'variants',
         { path: 'category', select: '_id name slug description' },
