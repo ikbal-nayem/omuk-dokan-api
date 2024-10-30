@@ -66,10 +66,14 @@ export const getCategoryTree = async (req, res) => {
     if (!isNull(isActive)) {
       query.isActive = isActive === 'true';
     }
-    const categories = await CategoryModel.find({ parent: null, ...query }).lean();
+    const categories = await CategoryModel.find({ parent: null, ...query })
+      .select('-__v -isDeleted -createdBy -updatedBy')
+      .lean();
     // Recursive function to populate subcategories
     const populateSubcategories = async (category) => {
-      const subcategories = await CategoryModel.find({ parent: category._id, ...query }).lean();
+      const subcategories = await CategoryModel.find({ parent: category._id, ...query })
+        .select('-__v -isDeleted -createdBy -updatedBy')
+        .lean();
       category.subcategories = subcategories;
       if (subcategories.length > 0) {
         await Promise.all(subcategories.map(populateSubcategories));
