@@ -18,7 +18,7 @@ export const generateSearchQuery = (req: Request) => {
   const qFileds: IObject = req.body?.filter;
   const query: any = { isDeleted: false };
   Object.keys(qFileds || {}).map((qKey) => {
-    if (!isNull(qFileds[qKey])) {
+    if (qKey !== 'searchKey' && !isNull(qFileds[qKey])) {
       query[qKey] = qFileds[qKey];
     }
   });

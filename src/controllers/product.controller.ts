@@ -1,5 +1,5 @@
 import { IObject } from '@src/interface/common.interface';
-import { CategoryModel, VariantModel } from '@src/models/product-config.model';
+import { CategoryModel, CollectionModel, VariantModel } from '@src/models/product-config.model';
 import { ProductModel } from '@src/models/product.model';
 import { isNull } from '@src/utils/check-validation';
 import { throwBadRequestResponse, throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
@@ -196,6 +196,13 @@ export const searchProducts = async (req: Request, res: Response) => {
       if (category) {
         query.category = category._id;
         delete query.categorySlug;
+      }
+    }
+    if (qParams.collectionSlug) {
+      const collection = await CollectionModel.findOne({ slug: qParams.collectionSlug, isDeleted: false });
+      if (collection) {
+        query.collections = collection._id;
+        delete query.collectionSlug;
       }
     }
 
