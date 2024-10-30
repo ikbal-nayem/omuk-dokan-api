@@ -182,7 +182,7 @@ export const searchProducts = async (req: Request, res: Response) => {
   try {
     const meta = req.body?.meta;
     const qParams = req.body?.filter;
-    const query: IObject = generateSearchQuery(req);
+    const query: IObject = generateSearchQuery(req);    
     if (qParams?.searchKey) {
       query.$or = [
         { name: { $regex: qParams?.searchKey, $options: 'i' } },
@@ -191,14 +191,14 @@ export const searchProducts = async (req: Request, res: Response) => {
         { tags: { $regex: qParams?.searchKey, $options: 'i' } },
       ];
     }
-    if (qParams.categorySlug) {
+    if (qParams?.categorySlug) {
       const category = await CategoryModel.findOne({ slug: qParams.categorySlug, isDeleted: false });
       if (category) {
         query.category = category._id;
         delete query.categorySlug;
       }
     }
-    if (qParams.collectionSlug) {
+    if (qParams?.collectionSlug) {
       const collection = await CollectionModel.findOne({ slug: qParams.collectionSlug, isDeleted: false });
       if (collection) {
         query.collections = collection._id;

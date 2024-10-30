@@ -13,10 +13,10 @@ export const getRequestBody = (req: Request) => {
   }
 };
 
-export const generateSearchQuery = (req: Request) => {
+export const generateSearchQuery = (req: Request) => {  
   // In case of searchKey and any others custom filter props it should handle it on controller level as searchKey fields are dynamic
   const qFileds: IObject = req.body?.filter;
-  const query: any = { isDeleted: false };
+  const query: any = { isDeleted: false };  
   Object.keys(qFileds || {}).map((qKey) => {
     if (qKey !== 'searchKey' && !isNull(qFileds[qKey])) {
       query[qKey] = qFileds[qKey];
