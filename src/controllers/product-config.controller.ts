@@ -1,3 +1,4 @@
+import { IObject } from '@src/interface/common.interface';
 import { CategoryModel, CollectionModel } from '@src/models/product-config.model';
 import { isNull } from '@src/utils/check-validation';
 import { throwBadRequestResponse, throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
@@ -151,7 +152,11 @@ export const updateCollection = async (req, res) => {
 
 export const getCollections = async (req, res) => {
   try {
-    const collections = await CollectionModel.find({ isDeleted: false });
+    const query: IObject = { isDeleted: false };
+    if(req.query.isActive) {
+      query.isActive = req.query.isActive
+    }
+    const collections = await CollectionModel.find(query).select('-__v -isDeleted -createdBy -updatedBy');
     return res.status(200).json({ data: collections, success: true });
   } catch (error) {
     return throwServerErrorResponse(res, error);
