@@ -47,6 +47,7 @@ export interface IVariant {
 
 export interface IProduct {
   name: string;
+  summary: string;
   description: string;
   price: number;
   discountPrice?: number;
