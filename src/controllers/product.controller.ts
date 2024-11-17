@@ -182,7 +182,7 @@ export const searchProducts = async (req: Request, res: Response) => {
   try {
     const meta = req.body?.meta;
     const qParams = req.body?.filter;
-    const query: IObject = generateSearchQuery(req);    
+    const query: IObject = generateSearchQuery(req);
     if (qParams?.searchKey) {
       query.$or = [
         { name: { $regex: qParams?.searchKey, $options: 'i' } },
@@ -198,7 +198,7 @@ export const searchProducts = async (req: Request, res: Response) => {
         delete query.categorySlug;
       }
     }
-    if (qParams?.collectionSlug) {
+    if (qParams?.collectionSlug && qParams?.collectionSlug !== 'new-arrivals') {
       const collection = await CollectionModel.findOne({ slug: qParams.collectionSlug, isDeleted: false });
       if (collection) {
         query.collections = collection._id;
@@ -209,6 +209,7 @@ export const searchProducts = async (req: Request, res: Response) => {
     console.log(query);
 
     let queryBuilder = ProductModel.find(query)
+      .sort({ createdAt: -1 })
       .select(['-__v', '-isDeleted', '-createdBy', '-updatedBy'])
       .populate([
         'variants',
