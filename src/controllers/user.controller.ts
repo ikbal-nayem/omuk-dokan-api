@@ -11,8 +11,10 @@ const generateToken = (id) => {
 
 export const createUser = async (req, res) => {
   const email = req.body.email;
-  const isUserExists = await UserModel.findOne({ email });
-  if (isUserExists)
+  const mobile = req.body.mobile;
+  const isEmailExists = await UserModel.findOne({ email, isDeleted: false });
+  const isMobileExists = await UserModel.findOne({ mobile, isDeleted: false });
+  if (isEmailExists || isMobileExists)
     return res.status(400).json({
       message: 'User already exists',
       success: false,

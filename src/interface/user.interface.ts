@@ -3,6 +3,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
+  mobile: string;
   password: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;

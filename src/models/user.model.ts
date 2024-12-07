@@ -3,50 +3,18 @@ import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
 var userSchema = new mongoose.Schema<IUser>({
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  isSuperAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  roles: {
-    type: [String],
-    default: [],
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  firstName: { type: String, required: true },
+  lastName: { type: String },
+  email: { type: String, required: true, unique: true },
+  mobile: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false },
+  isSuperAdmin: { type: Boolean, default: false },
+  roles: { type: [String], default: [] },
+  isDeleted: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 userSchema.pre('save', async function (next) {
