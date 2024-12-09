@@ -2,7 +2,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { connectToDatabase } from './config/db-connect';
-import { handleOptionCORS } from './middlewares/common.middleware';
 import appRoutes from './routes/app.route';
 
 dotenv.config();
@@ -12,11 +11,11 @@ const PORT = parseInt(process.env.PORT || '4500');
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors(),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(handleOptionCORS);
 
 app.get('/', (req, res) => {
   return res.json({ message: 'Hello World!' });
