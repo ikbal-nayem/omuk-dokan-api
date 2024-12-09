@@ -19,12 +19,16 @@ export const createUser = async (req, res) => {
       message: 'User already exists',
       success: false,
     });
-  const newUser = await UserModel.create({ ...req.body });
-  return res.status(201).json({
-    message: 'User created successfully',
-    data: { id: newUser._id, email: newUser.email, userInfo: newUser, token: generateToken(newUser._id) },
-    success: true,
-  });
+  try {
+    const newUser = await UserModel.create({ ...req.body });
+    return res.status(201).json({
+      message: 'User created successfully',
+      data: { id: newUser._id, email: newUser.email, userInfo: newUser, token: generateToken(newUser._id) },
+      success: true,
+    });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
 };
 
 // Login user
