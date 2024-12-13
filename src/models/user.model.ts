@@ -26,6 +26,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// Remove password property on fetch data
+userSchema.set('toJSON', {
+  transform: (doc, ret, options) => {
+    delete ret.password;
+    delete ret.__v;
+  },
+});
+
+
 // Compare password method
 userSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
