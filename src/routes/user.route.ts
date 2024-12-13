@@ -1,4 +1,13 @@
-import { assignUserRoles, createUser, deleteUser, getAllUsers, getUserById, login, updateUser } from '@src/controllers/user.controller';
+import {
+  assignUserRoles,
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  getUserInfoByHeaderToken,
+  login,
+  updateUser,
+} from '@src/controllers/user.controller';
 import { authenticate, authorize } from '@src/middlewares/user.middleware';
 import { Router } from 'express';
 
@@ -10,6 +19,7 @@ userRoutes.post('/register', createUser);
 userRoutes.post('/login', login);
 userRoutes.put('/assign-roles/:id', authenticate, authorize('admin', 'superadmin'), assignUserRoles);
 
+userRoutes.get('/details', authenticate, getUserInfoByHeaderToken);
 userRoutes.get('/get', getAllUsers);
 userRoutes.get('/get/:id', getUserById);
 userRoutes.post('/login');

@@ -1,12 +1,12 @@
 import { IUser } from '@src/interface/user.interface';
 import UserModel from '@src/models/user.model';
-import { throwServerErrorResponse } from '@src/utils/error-handler';
+import { throwServerErrorResponse, throwUnauthorizedResponse } from '@src/utils/error-handler';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 // Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const generateToken = (id: string) => {
+  return jwt.sign({ _id: id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 export const createUser = async (req, res) => {
@@ -72,6 +72,19 @@ export const getUserById = async (req, res) => {
     data: user,
     success: true,
   });
+};
+
+export const getUserInfoByHeaderToken = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return throwUnauthorizedResponse(res);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const user = await UserModel.findById((decoded as any)._id).select('-password -__v -isDeleted -createdBy -updatedBy');
+    if (!user) return throwUnauthorizedResponse(res);
+    return res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
 };
 
 export const updateUser = async (req, res) => {
