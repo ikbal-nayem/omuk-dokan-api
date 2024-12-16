@@ -7,6 +7,13 @@ var userSchema = new mongoose.Schema<IUser>({
   lastName: { type: String },
   email: { type: String, required: true, unique: true },
   mobile: { type: String, required: true, unique: true },
+  address: [
+    {
+      _id: { type: mongoose.Schema.Types.ObjectId, default: new mongoose.Types.ObjectId(), auto: true },
+      isDefault: { type: Boolean, default: false },
+      address: { type: String, required: true },
+    },
+  ],
   password: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
   isSuperAdmin: { type: Boolean, default: false },
@@ -33,7 +40,6 @@ userSchema.set('toJSON', {
     delete ret.__v;
   },
 });
-
 
 // Compare password method
 userSchema.methods.comparePassword = async function (password: string) {

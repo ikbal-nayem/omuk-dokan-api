@@ -1,6 +1,6 @@
 import { IUser } from '@src/interface/user.interface';
 import UserModel from '@src/models/user.model';
-import { throwServerErrorResponse, throwUnauthorizedResponse } from '@src/utils/error-handler';
+import { throwNotFoundResponse, throwServerErrorResponse, throwUnauthorizedResponse } from '@src/utils/error-handler';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -126,6 +126,62 @@ export const assignUserRoles = async (req: Request, res: Response) => {
     await user.save();
 
     res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
+};
+
+// User address CRUD
+export const addUserAddress = async (req: Request, res: Response) => {
+  try {
+    const { address, isDefault } = req.body;
+    const user = await UserModel.findById(req.user?._id);
+    if (!user) return throwNotFoundResponse(res, 'User not found');
+
+    if (isDefault) {
+      user.address.forEach((addr) => (addr.isDefault = false));
+    }
+
+    user.address.push({ address, isDefault: user.address.length === 0 ? true : isDefault||false });
+    await user.save();
+
+    return res.status(201).json({ success: true, message: 'Address added successfully', data: user });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
+};
+
+export const updateUserAddress = async (req: Request, res: Response) => {
+  try {
+    const addressId = req.params.addressId;
+    const { address, isDefault } = req.body;
+    const user = await UserModel.findById(req.user?._id);
+    if (!user) return throwNotFoundResponse(res, 'User not found');
+
+    const addressIndex = user.address.findIndex((addr) => addr._id!.toString() === addressId);
+    if (addressIndex === -1) return throwNotFoundResponse(res, 'Address not found');
+
+    if (isDefault) user.address.forEach((addr) => (addr.isDefault = false));
+
+    user.address[addressIndex] = { _id: user.address[addressIndex]!._id, address, isDefault: isDefault || false };
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Address updated successfully', data: user });
+  } catch (error) {
+    return throwServerErrorResponse(res, error);
+  }
+};
+
+export const deleteUserAddress = async (req: Request, res: Response) => {
+  try {
+    const addressId = req.params.addressId;
+    const user = await UserModel.findById(req.user?._id);
+    if (!user) return throwNotFoundResponse(res, 'User not found');
+
+    user.address = user.address.filter((addr) => addr._id!.toString() !== addressId);
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Address deleted successfully', data: user });
   } catch (error) {
     return throwServerErrorResponse(res, error);
   }
