@@ -1,4 +1,4 @@
-import { Schema, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface ICategory {
   name: string;
@@ -10,8 +10,8 @@ export interface ICategory {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
-  createdBy: Schema.Types.ObjectId;
-  updatedBy: Schema.Types.ObjectId;
+  createdBy: Types.ObjectId;
+  updatedBy: Types.ObjectId;
 }
 
 export interface ICollection {
@@ -23,8 +23,8 @@ export interface ICollection {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
-  createdBy: Schema.Types.ObjectId;
-  updatedBy: Schema.Types.ObjectId;
+  createdBy: Types.ObjectId;
+  updatedBy: Types.ObjectId;
 }
 
 interface IVariantOption {
@@ -33,7 +33,7 @@ interface IVariantOption {
 }
 
 export interface IVariant {
-  _id?: Schema.Types.ObjectId;
+  _id?: Types.ObjectId;
   options: IVariantOption[];
   sku: string;
   stock: number;
@@ -64,14 +64,15 @@ export interface IProduct {
   sku: string;
   trackStock: boolean;
   stock?: number;
-  category: Schema.Types.ObjectId;
-  collections?: Schema.Types.ObjectId[];
+  category: Types.ObjectId;
+  collections?: Types.ObjectId[];
   tags?: Array<string>;
   images?: Array<string>;
+  thumbnails?: Array<string>;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
-  createdBy: Schema.Types.ObjectId;
-  updatedBy: Schema.Types.ObjectId;
+  createdBy: Types.ObjectId;
+  updatedBy: Types.ObjectId;
 }
