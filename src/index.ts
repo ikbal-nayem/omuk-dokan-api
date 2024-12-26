@@ -28,3 +28,6 @@ app.listen(PORT, async () => {
 
   console.log(`Application started on URL ${HOST}:${PORT} 🎉`);
 });
+
+
+module.exports = app;
