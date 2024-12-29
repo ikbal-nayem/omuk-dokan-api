@@ -1,4 +1,3 @@
-import { IOrderPayload } from '@src/interface/order.interface';
 import { DeliveryOptionsModel, OrderItemsModel, OrderModel, PaymentOptionsModel } from '@src/models/order.model';
 import { throwNotFoundResponse, throwServerErrorResponse } from '@src/utils/error-handler';
 import { Request, Response } from 'express';
@@ -26,7 +25,7 @@ export const updateDeliveryOption = async (req: Request, res: Response) => {
 
 export const getDeliveryOptions = async (req: Request, res: Response) => {
   try {
-    const deliveryOptions = await DeliveryOptionsModel.find();
+    const deliveryOptions = await DeliveryOptionsModel.find({ isDeleted: false }).select('-__v -isDeleted');
     return res.status(200).json({ success: true, data: deliveryOptions });
   } catch (error) {
     return throwServerErrorResponse(res, error);
@@ -65,7 +64,7 @@ export const updatePaymentOption = async (req: Request, res: Response) => {
 
 export const getPaymentOptions = async (req: Request, res: Response) => {
   try {
-    const paymentOptions = await PaymentOptionsModel.find();
+    const paymentOptions = await PaymentOptionsModel.find({ isDeleted: false }).select('-__v -isDeleted');
     return res.status(200).json({ success: true, data: paymentOptions });
   } catch (error) {
     return throwServerErrorResponse(res, error);

@@ -6,12 +6,16 @@ export type IPaymentOption = {
   code: string;
   title: string;
   img: string;
+  isActive: boolean;
+  isDeleted: boolean;
 };
 
 export type IDeliveryOption = {
   code: string;
   title: string;
   charge: number;
+  isActive: boolean;
+  isDeleted: boolean;
 };
 
 export type IOrderPayload = {
