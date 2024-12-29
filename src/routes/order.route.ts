@@ -18,7 +18,7 @@ const orderRoutes = Router();
 
 orderRoutes.get('/conf/delivery/get', getDeliveryOptions);
 orderRoutes.post('/conf/delivery/add', authenticate, authorize('admin'), createDeliveryOption);
-orderRoutes.put('/conf/delivery/:id', updateDeliveryOption);
+orderRoutes.put('/conf/delivery/:id', authenticate, authorize('admin'), updateDeliveryOption);
 
 orderRoutes.get('/get', getProducts);
 orderRoutes.post('/search', searchProducts);

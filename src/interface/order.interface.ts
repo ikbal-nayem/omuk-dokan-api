@@ -5,7 +5,7 @@ import { IUser } from './user.interface';
 export type IPaymentOption = {
   code: string;
   title: string;
-  img: string;
+  // img: string;
   isActive: boolean;
   isDeleted: boolean;
 };

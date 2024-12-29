@@ -12,7 +12,7 @@ export const deliveryOptionsSchema = new Schema<IDeliveryOption>({
 export const paymentOptionsSchema = new Schema<IPaymentOption>({
   code: { type: String, required: true },
   title: { type: String, required: true },
-  img: { type: String, required: true },
+  // img: { type: String, required: true },
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false}
 });
